@@ -60,4 +60,5 @@ public class WishlistService {
 
     public void deleteWishlist(Wishlist wishlist) {
     }
+    public void deleteUser(User user){repository.deleteUser(user);}
 }

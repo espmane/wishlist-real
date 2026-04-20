@@ -213,6 +213,85 @@ public class WishlistRepository {
 
         return template.query(sql, rowMapper, wishlist.getId());
     }
+    public void deleteUser (User user){
+        String sql = "DELTE *FROM users " +
+                " WHERE user.id = ?";
+        template.update(sql, user.getId());
+    }
+
+    public void updateWishlist(String username, Wishlist wishlist) {
+        final String userSql = """
+            SELECT id FROM users WHERE username = ?
+            """;
+
+        Integer userId = template.queryForObject(userSql, Integer.class, username);
+        final String checkSql = """
+            SELECT COUNT(*) FROM wishlist
+            WHERE user_id = ? AND name = ? AND id <> ?
+            """;
+
+        Integer count = template.queryForObject(
+                checkSql,
+                Integer.class,
+                userId,
+                wishlist.getName(),
+                wishlist.getId()
+        );
+
+        if (count != null && count > 0) {
+            throw new RuntimeException("Wishlist name already exists for this user");
+        }
+
+
+        final String updateSql = """
+            UPDATE wishlist
+            SET name = ?
+            WHERE id = ? AND user_id = ?
+            """;
+
+        int rowsAffected = template.update(
+                updateSql,
+                wishlist.getName(),
+                wishlist.getId(),
+                userId
+        );
+
+        if (rowsAffected == 0) {
+            throw new RuntimeException("Wishlist not found or not owned by user");
+        }
+    }
+
+    public void updateWish(Wish wish) {
+
+        final String checkSql = """
+            SELECT COUNT(*) FROM wish
+            WHERE name = ? AND id <> ?
+            """;
+
+        Integer count = template.queryForObject(
+                checkSql,
+                Integer.class,
+                wish.getName(),
+                wish.getId()
+        );
+
+        if (count != null && count > 0) {
+            throw new RuntimeException("Wish name already exists");
+        }
+
+        final String updateSql = """
+            UPDATE wish
+            SET name = ?
+            WHERE id = ?
+            """;
+
+        int rows = template.update(updateSql, wish.getName(), wish.getId());
+
+        if (rows == 0) {
+            throw new RuntimeException("Wish not found");
+        }
+    }
+}
 
     public Wishlist createWishlist(String username, Wishlist wishlist) {
         wishlist.setName(wishlist.getName().trim());

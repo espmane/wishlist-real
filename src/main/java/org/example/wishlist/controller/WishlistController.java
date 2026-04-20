@@ -181,4 +181,9 @@ public class WishlistController {
         var loggedInUser = (User) session.getAttribute("user");
         return loggedInUser.getId() != userId;
     }
+    @PostMapping
+    public String deleteUSer(@ModelAttribute User user){
+        service.deleteUser(user);
+        return "redirect:/";
+    }
 }
