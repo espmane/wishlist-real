@@ -207,10 +207,61 @@ public class WishlistRepository {
                 """;
         final RowMapper<Wish> rowMapper = (rs, rowNum) -> new Wish(
                 rs.getInt("id"),
-                rs.getString("link"));
+                rs.getString("link"),
+                rs.getString("name"),
+                rs.getDouble("pris"));
 
         return template.query(sql, rowMapper, wishlist.getId());
     }
-}
 
-//aa
+    public Wishlist createWishlist(String username, Wishlist wishlist) {
+        wishlist.setName(wishlist.getName().trim());
+
+        //Finder user gennem name og user id
+        User user = findUser(username);
+
+        final String insertWishlistSql = """
+                INSERT INTO wishlist (name, user_id)
+                VALUES (?, ?) """;
+
+        template.update(insertWishlistSql, wishlist.getName(), user.getId());
+
+        final String idSql = """
+                SELECT id FROM wishlist
+                WHERE name = ? AND user_id = ? """;
+
+        Integer wishlistId = template.queryForObject(
+                idSql, Integer.class, wishlist.getName(), user.getId());
+
+        wishlist.setId(wishlistId);
+        if (wishlist.getWishes() != null) {
+
+            final String insertWishSql = """
+                    INSERT INTO wishlist_wish (wishlist_id, wish_id)
+                    VALUES (?, ?) """;
+
+            for (Wish wish : wishlist.getWishes()) {
+                template.update(insertWishSql, wishlistId, wish.getId());
+            }
+
+            return findWishlist(user.getId(), wishlist.getName());
+        }
+    }
+
+    public Wish createWish(String username, Wish wish) {
+        if (wish.getName() != null) {
+            wish.setName(wish.getName().trim());
+        }
+
+        final String insertWishSql = "INSERT INTO wish (name) VALUES (?)";
+        template.update(insertWishSql, wish.getName());
+
+        //Retrieve generated id by unique name column
+        final String idSql = "SELECT id FROM wish WHERE name = ?";
+        Integer id = template.queryForObject(idSql, Integer.class, wish.getName());
+        wish.setId(id == null ? 0 : id);
+
+        wish.setLink(null);
+        return wish;
+    }
+}
