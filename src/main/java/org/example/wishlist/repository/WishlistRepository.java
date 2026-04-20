@@ -262,7 +262,6 @@ public class WishlistRepository {
     }
 
     public void updateWish(Wish wish) {
-
         final String checkSql = """
             SELECT COUNT(*) FROM wish
             WHERE name = ? AND id <> ?
@@ -290,7 +289,6 @@ public class WishlistRepository {
         if (rows == 0) {
             throw new RuntimeException("Wish not found");
         }
-    }
 }
 
     public Wishlist createWishlist(String username, Wishlist wishlist) {
