@@ -258,6 +258,37 @@ public class WishlistRepository {
             throw new RuntimeException("Wishlist not found or not owned by user");
         }
     }
+
+    public void updateWish(Wish wish) {
+
+        final String checkSql = """
+            SELECT COUNT(*) FROM wish
+            WHERE name = ? AND id <> ?
+            """;
+
+        Integer count = template.queryForObject(
+                checkSql,
+                Integer.class,
+                wish.getName(),
+                wish.getId()
+        );
+
+        if (count != null && count > 0) {
+            throw new RuntimeException("Wish name already exists");
+        }
+
+        final String updateSql = """
+            UPDATE wish
+            SET name = ?
+            WHERE id = ?
+            """;
+
+        int rows = template.update(updateSql, wish.getName(), wish.getId());
+
+        if (rows == 0) {
+            throw new RuntimeException("Wish not found");
+        }
+    }
 }
 
 //aa
