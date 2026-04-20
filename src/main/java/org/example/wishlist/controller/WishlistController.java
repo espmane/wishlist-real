@@ -34,6 +34,11 @@ public class WishlistController {
         return session.getAttribute("user") != null;
     }
 
+    @GetMapping("/html")
+    public String page(){
+        return "Login-page";
+    }
+
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
         if (isLoggedIn(session)) {

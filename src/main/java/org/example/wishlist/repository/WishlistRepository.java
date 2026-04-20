@@ -323,6 +323,7 @@ public class WishlistRepository {
 
             return findWishlist(user.getId(), wishlist.getName());
         }
+        return wishlist;
     }
 
     public Wish createWish(String username, Wish wish) {
