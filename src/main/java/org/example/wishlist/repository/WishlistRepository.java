@@ -53,21 +53,31 @@ public class WishlistRepository {
 
         wish.setName(wish.getName().trim());
         final String insertWishSql = """
-                INSERT INTO wish (link, name, price),
+                INSERT INTO wish (link, name, price)
                 VALUES (?, ?, ?)
                 """;
         final String insertWishlistWish = """
                 INSERT INTO wishlist_wish (wishlist_id, wish_id)
                 VALUES (?, ?)
                 """;
-        template.update(insertWishSql, wish.getLink(), wish.getName(), wish.getPrice());
+
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
+        template.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(insertWishSql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, wish.getLink());
+            ps.setString(2, wish.getName());
+            ps.setDouble(3, wish.getPrice());
+            return ps;
+        }, keyHolder);
+        wish.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+
         template.update(insertWishlistWish, wishlistId, wish.getId());
     }
 
     public boolean deleteWishlist(Wishlist wishlist) {
         final String sql = """
-                DELETE * FROM wishlist,
-                WHERE wishlist.id = ?
+                DELETE FROM wishlist
+                WHERE id = ?
                 """;
         return template.update(sql, wishlist.getId()) > 0;
     }
@@ -83,12 +93,15 @@ public class WishlistRepository {
                 AND w.name = ?
                 """;
 
-        return template.queryForObject(sql, (rs, rowNum) ->
+        Wishlist wishlist = template.queryForObject(sql, (rs, rowNum) ->
                         new Wishlist(
                                 rs.getInt("id"),
                                 rs.getString("name"),
                                 rs.getInt("user_id")),
                 username, wishlistName);
+
+        wishlist.setWishes(getWishesFromWishlist(wishlist));
+        return wishlist;
     }
 
     public User login(String username, String password) {
@@ -104,7 +117,7 @@ public class WishlistRepository {
                         rs.getString("email"));
         final var user = template.queryForObject(sql, userRowMapper, username);
 
-        if (password.equals(user.getPassword())) {
+        if (!password.equals(user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
         user.setPassword(null);
@@ -194,7 +207,7 @@ public class WishlistRepository {
 
     private List<Wish> getWishesFromWishlist(Wishlist wishlist) {
         final String sql = """
-                SELECT w.id, w.name
+                SELECT w.id, w.name, w.link, w.price
                 FROM wish w
                 JOIN wishlist_wish ww ON w.id = ww.wish_id
                 WHERE ww.wishlist_id = ?
@@ -203,7 +216,7 @@ public class WishlistRepository {
                 rs.getInt("id"),
                 rs.getString("link"),
                 rs.getString("name"),
-                rs.getDouble("pris"));
+                rs.getDouble("price"));
 
         return template.query(sql, rowMapper, wishlist.getId());
     }

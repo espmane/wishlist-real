@@ -5,21 +5,16 @@
     <title>Wishlist - Login</title>
 </head>
 <body>
-<form th:action="@{/Login}" method="post" th:object="${user}">
+<form th:action="@{/login}" method="post">
 
     <div>
         <label for="username">Brugernavn:</label>
-        <input type="text" th:field="*{username}" id="username" required/>
+        <input type="text" name="username" id="username" required/>
     </div>
 
     <div>
         <label for="password">Adgangskode:</label>
-        <input type="password" th:field="*{password}" id="password" required/>
-    </div>
-
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" th:field="*{email}" id="email" required/>
+        <input type="password" name="password" id="password" required/>
     </div>
 
     <button type="submit">Login</button>

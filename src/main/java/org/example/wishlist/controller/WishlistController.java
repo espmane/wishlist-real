@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -45,12 +45,12 @@ public class WishlistController {
             var user = (User) session.getAttribute("user");
             return "redirect:/" + user.getUsername();
         }
-        return "login-page "; // udfyld form med thymeleaf og submit til /login postmap
+        return "login-page"; // udfyld form med thymeleaf og submit til /login postmap
     }
 
     @PostMapping("/login")
-    public String login(@RequestAttribute String username,
-                        @RequestAttribute String password, HttpSession session, Model model) {
+    public String login(@RequestParam String username,
+                        @RequestParam String password, HttpSession session, Model model) {
         try {
             var user = service.userLogin(username, password);
             session.setAttribute("user", user);
@@ -62,11 +62,11 @@ public class WishlistController {
         }
     }
 
-    @PostMapping("/forgot-password")
-    public String forgotCredentials(@RequestAttribute String email) {
-        service.forgotCredentials(email);
-        return "redirect:/login";
-    }
+//    @PostMapping("/forgot-password")
+//    public String forgotCredentials(@RequestAttribute String email) {
+//        service.forgotCredentials(email);
+//        return "redirect:/login";
+
 
     @GetMapping("/register")
     public String regiserPage(Model model) {
@@ -100,9 +100,10 @@ public class WishlistController {
             var loggedInUser = (User) session.getAttribute("user");
             var wishlists = service.findUsersWishlists(loggedInUser.getUsername());
             model.addAttribute("wishlists", wishlists);
+            model.addAttribute("user", loggedInUser);
             return "user-wishlists";
         }
-        return "login-page";
+        return "redirect:/login";
     }
 
     // returnere specifik wishlist fra specifik bruger?
@@ -129,7 +130,7 @@ public class WishlistController {
     @GetMapping("/add")
     public String addWishlist(Model model, HttpSession session) {
         if (!isLoggedIn(session)) {
-            throw new UnauthenticatedException("You need to be logged in to create wishlists");
+            return "redirect:/login";
         }
         var loggedInUser = (User) session.getAttribute("user");
         var wishlist = new Wishlist();
@@ -137,7 +138,7 @@ public class WishlistController {
         wishlist.setUserId(loggedInUser.getId());
 
         model.addAttribute("wishlist", wishlist);
-        return "add-wishlist"; // udfylder en form og sender til /save endpoint
+        return "add-wishlist";
     }
 
     @PostMapping("/save")

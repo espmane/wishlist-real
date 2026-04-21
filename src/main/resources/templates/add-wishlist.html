@@ -3,71 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <title>Wishlist - Tilføj ønskeliste</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div>
 
-    <br>
-    <h1>Tilføj ønskeliste</h1>
-    <br>
+<div class="container mt-5" th:object="${wishlist}">
+    <h1 class="text-center mb-4">Tilføj ønskeliste</h1>
 
-    <form th:action="@{/save}" method="post" th:object="${wishlist}">
+    <form th:action="@{/save}" method="post">
         <input type="hidden" th:field="*{userId}" />
 
-        <div>
-            <label>Navn:</label>
-            <input type="text" th:field="*{name}" required />
+        <!-- Navn på liste -->
+        <div class="mb-4">
+            <label class="form-label">Navn på ønskeliste</label>
+            <input type="text" th:field="*{name}" class="form-control" required>
         </div>
 
-        <h3>Ønsker</h3>
-
+        <!-- Wishes container -->
         <div id="wishes-container">
-            <div th:each="wish, iterStat : *{wishes}">
-                <input type="text"
-                       th:name="'wishes[' + ${iterStat.index} + '].name'"
-                       th:value="${wish.name}"
-                       placeholder="Ønske"
-                       required />
+
+            <!-- En wish -->
+            <div class="card mb-3 p-3" th:each="wish, iterStat : *{wishes}">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label>Navn</label>
+                        <input type="text"
+                               th:name="'wishes[' + ${iterStat.index} + '].name'"
+                               th:value="${wish.name}"
+                               class="form-control"
+                               placeholder="Produkt navn"
+                               required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Link</label>
+                        <input type="text"
+                               th:name="'wishes[' + ${iterStat.index} + '].link'"
+                               th:value="${wish.link}"
+                               class="form-control"
+                               placeholder="https://...">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Pris</label>
+                        <input type="number"
+                               th:name="'wishes[' + ${iterStat.index} + '].price'"
+                               th:value="${wish.price}"
+                               class="form-control"
+                               placeholder="DKK">
+                    </div>
+
+                </div>
             </div>
+
         </div>
 
-        <button type="button" onclick="addWish()">Tilføj ønske</button>
-        <button type="submit">Gem</button>
+        <!-- Add button -->
+        <button type="button" onclick="addWish()" class="btn btn-outline-secondary mb-3">
+            ➕ Tilføj ønske
+        </button>
+
+        <br>
+
+        <button type="submit" class="btn btn-outline-primary">Gem</button>
     </form>
-
-<!--    100% Rezas kone-->
-    <script>
-        function addWish() {
-            const container = document.getElementById('wishes-container');
-            const inputs = container.querySelectorAll('input[type="text"]');
-
-            if (inputs.length > 0) {
-                const lastInput = inputs[inputs.length - 1];
-                if (lastInput.value.trim() === '') {
-                    lastInput.focus();
-                    lastInput.style.border = '2px solid red';
-                    return;
-                }
-            }
-
-            const index = inputs.length;
-            const div = document.createElement('div');
-            const input = document.createElement('input');
-
-            input.type = 'text';
-            input.name = `wishes[${index}].name`;
-            input.placeholder = 'Ønske';
-
-            input.addEventListener('input', () => {
-                input.style.border = '';
-            });
-
-            div.appendChild(input);
-            container.appendChild(div);
-        }
-    </script>
 </div>
 
+<script>
+    function addWish() {
+        const container = document.getElementById('wishes-container');
+        const index = container.children.length;
+
+        const card = document.createElement('div');
+        card.className = "card mb-3 p-3";
+
+        card.innerHTML = `
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Navn</label>
+                    <input type="text" name="wishes[${index}].name" class="form-control" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label>Link</label>
+                    <input type="text" name="wishes[${index}].link" class="form-control">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Pris</label>
+                    <input type="number" name="wishes[${index}].price" class="form-control">
+                </div>
+            </div>
+        `;
+
+        container.appendChild(card);
+    }
+</script>
 
 </body>
 </html>
