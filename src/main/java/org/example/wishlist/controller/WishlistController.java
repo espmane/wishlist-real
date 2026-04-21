@@ -35,7 +35,7 @@ public class WishlistController {
     }
 
     @GetMapping("/html")
-    public String page(){
+    public String page() {
         return "Login-page";
     }
 
@@ -156,8 +156,12 @@ public class WishlistController {
         if (isNotOwner(session, wishlist.getUserId())) {
             throw new ForbiddenAccessException("You are not allowed to update this wishlist");
         }
+        if (!isLoggedIn(session)) {
+            throw new UnauthenticatedException("You need to be logged in to update a wishlist");
+        }
+        var user = (User) session.getAttribute("user");
 
-        service.updateWishlist(wishlist);
+        service.updateWishlist(user.getUsername(), wishlist);
         return "redirect:/";
     }
 
@@ -186,8 +190,9 @@ public class WishlistController {
         var loggedInUser = (User) session.getAttribute("user");
         return loggedInUser.getId() != userId;
     }
+
     @PostMapping
-    public String deleteUSer(@ModelAttribute User user){
+    public String deleteUSer(@ModelAttribute User user) {
         service.deleteUser(user);
         return "redirect:/";
     }

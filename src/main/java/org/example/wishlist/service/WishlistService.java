@@ -50,15 +50,25 @@ public class WishlistService {
 
     public Wishlist saveWishlist(Wishlist wishlist) {
         if (wishlist == null) {
-            throw new InvalidInputException("Wishlist cannot be null");
+            throw new InvalidInputException("Wishlist cannot be empty");
         }
         return repository.saveWishlist(wishlist);
     }
 
-    public void updateWishlist(Wishlist wishlist) {
+    public void updateWishlist(String username, Wishlist wishlist) {
+        repository.updateWishlist(username, wishlist);
     }
 
     public void deleteWishlist(Wishlist wishlist) {
+        if (!repository.deleteWishlist(wishlist)) {
+            throw new RuntimeException("Something went wrong, wishlist wasn't deleted");
+        }
     }
-    public void deleteUser(User user){repository.deleteUser(user);}
+
+    public void deleteUser(User user) {
+        if (!repository.deleteUser(user)) {
+            throw new RuntimeException("Something went wrong, user wasn't deleted");
+        }
+    }
+
 }
