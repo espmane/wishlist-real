@@ -1,4 +1,4 @@
-/* CSS delen lavet 70% af vores gode ven chatty for at gøre den pænere*/
+/* Kopiret fra login-page.css*/
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
@@ -24,8 +24,7 @@ input {
     border-radius: 5px;
     border: 1px solid #aaa;
 }
-
-/* KNAPPER */
+/* kanpperne*/
 button {
     width: 100%;
     padding: 10px;

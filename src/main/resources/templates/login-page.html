@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Wishlist - Login</title>
+    <link rel="stylesheet" href="static/login-page.css">
 </head>
 <body>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/login}" method="post" th:object="${user}">
+
+    <!--    <div>-->
+    <!--        <label for="username">Brugernavn:</label>-->
+    <!--        <input type="text" th:field="*{username}" id="username" required/>-->
+    <!--    </div>-->
+    <h1>Login</h1>
+    <a href="index.html" class="home">Gå tilbage</a>
 
     <div>
         <label for="username">Brugernavn:</label>
@@ -17,7 +25,10 @@
         <input type="password" name="password" id="password" required/>
     </div>
 
+
     <button type="submit">Login</button>
+    <button>Glemt kode</button>
+
 
 </form>
 
