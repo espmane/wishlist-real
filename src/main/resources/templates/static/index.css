@@ -55,10 +55,14 @@ body {
 }
 
 .StorKnap {
-    color: greenyellow;
-    margin-top: 20px;
-    padding: 15px;
-    font-size: 18px;
+    justify-self: start;
+    text-decoration: none;
+    color: black;
+
+    padding: 12px 18px;
+    background-color: greenyellow;
+    border-radius: 8px;
+    display: inline-block;
 }
 
 .partner-img {
