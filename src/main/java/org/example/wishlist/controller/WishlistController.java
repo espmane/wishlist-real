@@ -1,9 +1,6 @@
 package org.example.wishlist.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.servlet.http.HttpSession;
 import org.example.wishlist.exception.ForbiddenAccessException;
 import org.example.wishlist.exception.InvalidInputException;
 import org.example.wishlist.exception.UnauthenticatedException;
@@ -16,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpSession;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/wishlist")

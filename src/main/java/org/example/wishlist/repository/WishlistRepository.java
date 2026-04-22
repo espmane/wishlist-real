@@ -1,10 +1,5 @@
 package org.example.wishlist.repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Objects;
-
 import org.example.wishlist.exception.InvalidCredentialsException;
 import org.example.wishlist.model.User;
 import org.example.wishlist.model.Wish;
@@ -19,6 +14,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class WishlistRepository {

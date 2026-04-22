@@ -1,13 +1,13 @@
 package org.example.wishlist.service;
 
-import java.util.List;
-
 import org.example.wishlist.exception.InvalidInputException;
 import org.example.wishlist.exception.UserAlreadyExistsException;
 import org.example.wishlist.model.User;
 import org.example.wishlist.model.Wishlist;
 import org.example.wishlist.repository.WishlistRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WishlistService {
