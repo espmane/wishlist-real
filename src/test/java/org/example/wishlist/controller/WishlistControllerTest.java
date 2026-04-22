@@ -9,6 +9,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 @WebMvcTest(WishlistController.class)
 class WishlistControllerTest {
 
@@ -27,11 +31,13 @@ class WishlistControllerTest {
     }
 
     @Test
-    void frontPage() {
+    void frontPage() throws Exception{
+        mockMvc.perform(get("/wishlist")).andExpect(status().isOk()).andExpect(view().name("index"));
     }
 
     @Test
-    void findWishlists() {
+    void findWishlists() throws Exception{
+
     }
 
     @Test
@@ -57,4 +63,5 @@ class WishlistControllerTest {
     @Test
     void deleteWishlist() {
     }
+
 }
