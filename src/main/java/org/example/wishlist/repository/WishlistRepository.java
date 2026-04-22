@@ -9,6 +9,7 @@ import org.example.wishlist.exception.InvalidCredentialsException;
 import org.example.wishlist.model.User;
 import org.example.wishlist.model.Wish;
 import org.example.wishlist.model.Wishlist;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,10 +18,15 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+
 @Repository
 public class WishlistRepository {
 
     private final JdbcTemplate template;
+
+    @Autowired
+    private DataSource dataSource;
 
     public WishlistRepository(JdbcTemplate template) {
         this.template = template;
@@ -110,6 +116,14 @@ public class WishlistRepository {
     }
 
     public User login(String username, String password) {
+        System.out.println("Login forsøgt: " + username);
+
+        try {
+            System.out.println("DB URL: " + dataSource.getConnection().getMetaData().getURL());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         final String sql = """
                 SELECT id, username, password
                 FROM users
