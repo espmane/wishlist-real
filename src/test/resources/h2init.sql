@@ -36,8 +36,6 @@ CREATE TABLE wishlist_wish
 );
 
 -- init-data
-USE wishlist;
-
 INSERT INTO users (username, password)
 VALUES ('julius', 'pass123'),
        ('marie', 'pass456'),
