@@ -100,9 +100,24 @@ public class WishlistController {
         return "user-wishlists";
     }
 
+//    @GetMapping("/{username}/{wishlistName}")
+//    public String findWishlist(@PathVariable String username,
+//                               @PathVariable String wishlistName, Model model, HttpSession session) {
+//        model.addAttribute("wishlist", service.findWishlist(username, wishlistName));
+//        model.addAttribute("username", username);
+//        model.addAttribute("isOwner", isOwner(session, username));
+//        return "user-wishlist";
+//    }
+
     @GetMapping("/{username}/{wishlistName}")
     public String findWishlist(@PathVariable String username,
-                               @PathVariable String wishlistName, Model model, HttpSession session) {
+                               @PathVariable String wishlistName,
+                               Model model,
+                               HttpSession session) {
+
+        System.out.println("Lookup username = [" + username + "]");
+        System.out.println("Lookup wishlistName = [" + wishlistName + "]");
+
         model.addAttribute("wishlist", service.findWishlist(username, wishlistName));
         model.addAttribute("username", username);
         model.addAttribute("isOwner", isOwner(session, username));
@@ -143,11 +158,21 @@ public class WishlistController {
         if (!isLoggedIn(session)) {
             throw new UnauthenticatedException("You need to be logged in to create wishlists");
         }
+
         var loggedInUser = (User) session.getAttribute("user");
         wishlist.setUserId(loggedInUser.getId());
+
+        if (wishlist.getName() != null) {
+            wishlist.setName(wishlist.getName().trim());
+        }
+
         var savedWishlist = service.saveWishlist(wishlist);
 
-        String encodedName = URLEncoder.encode(savedWishlist.getName(), StandardCharsets.UTF_8); // ikke testet, men skulle fix problemer med æøå
+        String encodedName = org.springframework.web.util.UriUtils.encodePathSegment(
+                savedWishlist.getName().trim(),
+                StandardCharsets.UTF_8
+        );
+
         return "redirect:/wishlist/" + loggedInUser.getUsername() + "/" + encodedName;
     }
 
