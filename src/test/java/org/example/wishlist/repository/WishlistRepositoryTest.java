@@ -1,8 +1,10 @@
 package org.example.wishlist.repository;
 
+import org.example.wishlist.model.User;
 import org.example.wishlist.model.Wish;
 import org.example.wishlist.model.Wishlist;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Equals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,58 +29,66 @@ class WishlistRepositoryTest {
 
     @Test
     void saveWishlist() {
-        Wish TestWish = new Wish();
-        TestWish.setName("AirPods");
-        TestWish.setLink("http://eksempellink.com/AirPods");
-        TestWish.setPrice(1600);
+        Wish TestWish = new Wish(2,"https://eksempellink.com/AirPods","Airpods",1600);
+//        TestWish.setName("AirPods");
+//        TestWish.setLink("https://eksempellink.com/AirPods");
+//        TestWish.setPrice(1600);
 
-        Wishlist wishlist = new Wishlist();
-        wishlist.setName("TestListe");
-        wishlist.setUserId(8);
-        wishlist.setWishes(List.of(TestWish));
+        Wishlist wishlist = new Wishlist(8,"Testliste",2, List.of(TestWish));
+//        wishlist.setName("TestListe");
+//        wishlist.setUserId(2);
+//        wishlist.setWishes(List.of(TestWish));
 
        Wishlist test = repo.saveWishlist(wishlist);
         assertThat(test).isNotNull();
         assertThat(test.getName()).isEqualTo("Testliste");
-        assertThat(test.getUserId()).isEqualTo(8);
+        assertThat(test.getUserId()).isEqualTo(2);
 
+        Wishlist db = repo.findWishlist("marie","Testliste");
+        assertThat(db).isNotNull();
+        assertThat(db.getName()).isEqualTo("Testliste");
+        assertThat(db.getUserId()).isEqualTo(2);
     }
 
     @Test
     void saveWish() {
+        Wish TestWish = new Wish(2,"https://eksempellink.com/AirPods","Airpods",1600);
+
+        repo.saveWish(TestWish,2);
     }
 
-    @Test
-    void deleteWishlist() {
-    }
-
-    @Test
-    void findWishlist() {
-    }
-
-    @Test
-    void login() {
-    }
 
     @Test
     void registerUser() {
+        User user = new User();
+        user.setUsername("Hector");
+        user.setPassword("lillebror");
+
+        User testBruger = repo.registerUser(user);
+
+        assertThat(testBruger).isNotNull();
+        assertThat(testBruger.getId() > 0);
+
     }
 
-    @Test
-    void deleteUser() {
-    }
 
     @Test
     void findUser() {
+        User user= repo.findUser("marie");
+
+        assertNotNull(user);
+        assertEquals("marie", user.getUsername());
+        assertNotNull(user.getWishlists());
+        assertFalse(user.getWishlists().isEmpty());
     }
 
     @Test
     void userExists() {
+        boolean findes = repo.userExists("marie");
+
+        assertTrue(findes);
     }
 
-    @Test
-    void updateWishlist() {
-    }
 
     @Test
     void updateWish() {
