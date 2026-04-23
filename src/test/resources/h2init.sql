@@ -1,6 +1,6 @@
-DROP SCHEMA IF EXISTS wishlist;
+DROP SCHEMA IF EXISTS wishlist CASCADE;
 CREATE SCHEMA wishlist;
-USE wishlist;
+SET SCHEMA wishlist;
 
 CREATE TABLE users
 (
